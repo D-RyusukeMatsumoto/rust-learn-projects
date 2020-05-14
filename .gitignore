@@ -19,3 +19,10 @@ Cargo.lock
 /hello_world/.idea
 /rpn_calc/src/.idea
 /bitonic-sorter/src/.idea
+/bitonic-sorter/.idea
+
+
+
+#Added by cargo
+
+/target
