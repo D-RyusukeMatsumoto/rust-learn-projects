@@ -16,16 +16,3 @@ pub fn sample() {
     // 参照元の配列の内容を確認
     assert_eq!(a1, [5, 30, 6, 2]); // スライスを通じて配列の内容が変更された
 }
-
-
-// テストの作成
-#[cfg(test)]
-mod tests {
-    use super::sample;
-
-    #[test]
-    fn test1() {
-        sample();
-    }
-
-}
