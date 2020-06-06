@@ -4,6 +4,8 @@ pub fn sample()
 {
     sample_1();
     sample_2();
+    sample_3();
+    sample_4();
 }
 
 
@@ -49,6 +51,7 @@ fn sample_3()
 }
 
 
+#[allow(dead_code)]
 fn sample_4()
 {
     let utf8: [u8; 4] = [0x61, 0xe3, 0x81, 0x82];
@@ -63,6 +66,31 @@ fn sample_4()
 }
 
 
+// 可変のstr
+#[allow(dead_code)]
+fn sample_5() {
+    // 文字リテラル( &'static str )から&mut strは直接得られない
+    // まず文字列リテラルをStringへ変換し,そこから&mut strを取り出す
+    let mut s1 = "abcあいう".to_string();
+
+    // &mut strを得る,これはStringが持つUTF-8バイト列を指す可変スライス
+    let s2 = s1.as_mut_str(); // &mut str型
+
+    // 英小文字を大文字に変換
+    s2.make_ascii_uppercase();
+    assert_eq!(s2, "ABCあいう");
+
+    // &mut strのUTF-8バイト列を直接操作して"あ"( 3バイト )を"*a*"に変更する
+    let b = unsafe{ s2.as_bytes_mut() };
+    b[3] = b'*';
+    b[4] = b'a';
+    b[5] = b'*';
+
+    // 大元のStringが変更されている
+    assert_eq!(s1, "ABC*a*いう");
+}
+
+
 #[cfg(test)]
 mod tests
 {
@@ -71,6 +99,7 @@ mod tests
     use super::sample_2;
     use super::sample_3;
     use super::sample_4;
+    use super::sample_5;
 
 
     #[test]
@@ -98,6 +127,9 @@ mod tests
     {
         sample_4();
     }
+
+    #[test]
+    fn test_5(){ sample_5(); }
 }
 
 
