@@ -6,6 +6,8 @@
 /bitonic-sorter/target/
 /ch04_14_array/target/
 /ch04_15_slice1/target/
+/ch05/target/
+
 
 # Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
 # More information here https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html
@@ -23,6 +25,7 @@ Cargo.lock
 /bitonic-sorter/.idea
 /ch04_14_array/.idea
 /ch04_15_slice1/.idea
+/ch05/.idea
 
 
 #Added by cargo
