@@ -29,7 +29,7 @@ mod test {
     use super::sample;
 
     fn test(){
-        sample();
+        //sample();
     }
 
 }
