@@ -1,4 +1,4 @@
-use test::assert_test_result;
+
 
 pub fn sample(){
     println!("ch05_03_boxed_slice.rs");
