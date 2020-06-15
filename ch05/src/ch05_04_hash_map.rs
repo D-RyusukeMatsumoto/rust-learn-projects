@@ -26,6 +26,7 @@ pub fn sample() {
 
 }
 
+/*
 #[cfg(test)]
 mod test {
 
@@ -37,5 +38,6 @@ mod test {
     }
 
 }
+*/
 
 
