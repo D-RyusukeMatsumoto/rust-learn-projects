@@ -147,6 +147,80 @@ fn sample_7()
 }
 
 
+// 範囲
+// start..end, start..=end, start.., ..end 等の形をとり,数列の作成やスライスの範囲指定などで使われる
+// ユーザ定義型として実現される.
+fn sample_8()
+{
+    let a = ['a', 'b', 'c', 'd', 'e'];
+
+    // 糖衣構文と実際の範囲の対応
+    assert_eq!(a[.. ],   ['a', 'b', 'c', 'd', 'e']);
+    assert_eq!(a[ ..3],  ['a', 'b', 'c',         ]);
+    assert_eq!(a[ ..=3], ['a', 'b', 'c', 'd',    ]);
+    assert_eq!(a[1.. ],  [     'b', 'c', 'd', 'e']);
+    assert_eq!(a[1.. 3], [     'b', 'c',         ]);
+    assert_eq!(a[1..=3], [     'b', 'c', 'd',    ]);
+
+    // 糖衣構文とRange*型の対応
+    assert_eq!( .. ,   std::ops::RangeFull );
+    assert_eq!( .. 3,  std::ops::RangeTo{ end: 3 });
+    assert_eq!( ..=3,  std::ops::RangeToInclusive{ end: 3});
+    assert_eq!( 1.. ,  std::ops::RangeFrom{ start: 1} );
+    assert_eq!( 1.. 3, std::ops::Range{ start: 1, end: 3});
+    assert_eq!( 1..=3, std::ops::RangeInclusive::new(1, 3));
+}
+
+
+// Option
+fn sample_9()
+{
+    let a1 = ['a', 'b', 'c', 'd'];
+    assert_eq!(a1.get(0), Some(&'a')); // インデックス0は配列 a1 の範囲内なので Some(&値) が返る
+    assert_eq!(a1.get(4), None);       // インデックス4は範囲外なので None が返る
+
+    let mut o1 = Some(10);                 // Option<i32>型
+    match o1 {                             // match式でバリアントが判別できる
+        Some(s) => assert_eq!(s, 10), // パターンマッチで中の値を取り出す
+        None => unreachable!(),
+    }
+
+    o1 = Some(20);
+    if let Some(s) = o1 { // if let 式でもバリアントの判別と値の取り出しができる
+        assert_eq!(s, 20);
+    }
+
+    // Option型にはアンラップに便利なメソッドがいくつか定義されている
+    let mut o2 = Some(String::from("Hello")); // Option<String>型
+    assert_eq!(o2.unwrap(), "Hello");            // unwrap()でSomeの中の値が取り出せる
+
+    // しかしunwrap()はNoneの時にpanicするので,出来るだけ使わないほうがいい
+    o2 = None;
+    //o2.unwrap(); // <- このシチュエーションの時にpanicになる
+
+    // unwrap_or_else()ならNoneでもpanicしないので安心して利用出来る
+    // Noneの時はクロージャを実行し,Noneの代わりになる値を得る
+    assert_eq!(o2.unwrap_or_else(|| String::from("o2 is none")), "o2 is none");
+
+    // Someで包まれた値を操作するならmap()やand_then()等のコンビねーたが便利
+    // map()はSome(値)の時は値にクロージャを適用し,クロージャが返した値をSomeで包みなおす
+    let mut o3 = Some(25);
+    assert_eq!(o3.map(|n| n * 10), Some(250));
+
+    // Noneなら何もせずNoneを返す
+    o3 = None;
+    assert_eq!(o3.map(|n| n * 10), None);
+
+    o3 = Some(10);
+    assert_eq!(
+        o3.map(|n| n * 10)
+            // and_then()はSome(値)の時は値にクロージャを適用し
+            // クロージャが返した値を( Some(新しい値) または None )をそのまま返す
+            .and_then(|n| if n >= 200 { Some(n) } else { None }),
+            None);
+}
+
+
 #[cfg(test)]
 mod test
 {
@@ -158,6 +232,8 @@ mod test
     use super::sample_5;
     use super::sample_6;
     use super::sample_7;
+    use super::sample_8;
+    use super::sample_9;
 
 
     #[test]
@@ -190,6 +266,12 @@ mod test
 
     #[test]
     fn test_7() { sample_7(); }
+
+    #[test]
+    fn test_8() { sample_8(); }
+
+    #[test]
+    fn test_9() { sample_9(); }
 
 }
 
