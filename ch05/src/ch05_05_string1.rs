@@ -2,7 +2,7 @@
 
 pub fn sample()
 {
-    sample_2();
+    sample_11();
 }
 
 
@@ -221,6 +221,112 @@ fn sample_9()
 }
 
 
+fn sample_10()
+{
+    // インデックス0と3の両方に値があるのでそれらの合計がSomeで包まれて返される
+    assert_eq!(add_elems(&[3, 7, 31, 127]), Some(3 + 127));
+
+    // インデックス3がないのでNoneが返される
+    assert_eq!(add_elems(&[7, 11]), None);
+}
+
+
+// 複数のオプション値がすべてSomeの時に処理を実行したいなら,?演算子が便利
+fn add_elems(s: &[i32]) -> Option<i32> {
+
+    // 複数のOption値を扱うときは?演算子が便利
+    // Some( 値 )なら値を取り出し,Noneならこの関数からすぐに戻る( Noneを返す )
+    let s0 = s.get(0)?;
+    let s3 = s.get(3)?;
+    Some(s0 + s3)
+}
+
+
+// Result<T, E>のサンプル
+// Result型の返り値は結果がエラーになる可能性を暗示する型
+fn sample_11()
+{
+    // str::parse()は文字列をしていした型( ここではi32型 )に変換する
+    assert_eq!("10".parse::<i32>(), Ok(10)); // 変換出来たらOk(10)が返される
+    let res0 = "a".parse::<i32>(); // 変換できなかったら Err(エラーを表す値) が返される
+    assert!(res0.is_err());
+    println!("{:?}", res0); // -> Err(ParseIntError { kind: InvalidDigit })
+}
+
+
+// リザルト型の返り値を持つ関数を利用する例
+// Errorが出たときのサンプルも併記
+fn sample_12()
+{
+    assert_eq!(add0("3", "127"), Ok(3 + 127));
+    assert!(add0("3", "abc").is_err());
+}
+
+
+// オプション値と同様に複数のリザルト値を扱うときは?演算子が便利
+// Ok(値)なら値を取り出し,Err(エラーを表す値)ならこの関数からリターンする
+fn add0(
+    s0: &str,
+    s1: &str)
+    -> Result<i32, std::num::ParseIntError>
+{
+    let s0 = s0.parse::<i32>()?;
+    let s1 = s1.parse::<i32>()?;
+    Ok(s0 + s1)
+}
+
+
+// map_err()コンビネータを利用してのエラー書き換えの例
+fn sample_13()
+{
+    assert_eq!(add1("3", "abc"), Err("s1が整数ではありません".to_string()));
+}
+
+
+// map_err()コンビネータを利用してのエラー書き換えの例
+fn add1(
+    s0: &str,
+    s1: &str)
+    -> Result<i32, String>
+{
+    let s0 = s0.parse::<i32>().map_err(|_e| "s0が整数ではありません")?;
+    let s1 = s1.parse::<i32>().map_err(|_e| "s1が整数ではありません")?;
+    Ok(s0 + s1)
+}
+
+
+// 型エイリアス
+type UserName = String;
+type Id = i64;
+type Timestamp = i64;
+type User = (Id, UserName, Timestamp);
+
+
+// 型エイリアスで定義した別名のものを生成するサンプル
+fn sample_14()
+{
+    let id = 400;
+    let now = 4567890123;
+    let user = new_user(String::from("mika"), id, now);
+
+    // IdとTimestampは同じi64型なので間違えてもエラーにならない
+    let bad_user = new_user(String::from("kazuki"), now, id);
+
+}
+
+
+// 型エイリアスで定義した別名のものを生成するサンプル
+fn new_user(
+    name: UserName,
+    id: Id,
+    created: Timestamp)
+    -> User
+{
+    (id, name, created)
+}
+
+
+
 #[cfg(test)]
 mod test
 {
@@ -234,44 +340,27 @@ mod test
     use super::sample_7;
     use super::sample_8;
     use super::sample_9;
+    use super::sample_10;
+    use super::sample_11;
+    use super::sample_12;
+    use super::sample_13;
+    use super::sample_14;
 
-
-    #[test]
-    fn test_0() { sample_0(); }
-
-
-    #[test]
-    fn test_1() { sample_1(); }
-
-
-    #[test]
-    fn test_2() { sample_2() }
-
-
-    #[test]
-    fn test_3() { sample_3(); }
-
-
-    #[test]
-    fn test_4() { sample_4(); }
-
-
-    #[test]
-    fn test_5() { sample_5(); }
-
-
-    #[test]
-    fn test_6() { sample_6(); }
-
-
-    #[test]
-    fn test_7() { sample_7(); }
-
-    #[test]
-    fn test_8() { sample_8(); }
-
-    #[test]
-    fn test_9() { sample_9(); }
+    #[test] fn test_0() { sample_0(); }
+    #[test] fn test_1() { sample_1(); }
+    #[test] fn test_2() { sample_2() }
+    #[test] fn test_3() { sample_3(); }
+    #[test] fn test_4() { sample_4(); }
+    #[test] fn test_5() { sample_5(); }
+    #[test] fn test_6() { sample_6(); }
+    #[test] fn test_7() { sample_7(); }
+    #[test] fn test_8() { sample_8(); }
+    #[test] fn test_9() { sample_9(); }
+    #[test] fn test_10() { sample_10(); }
+    #[test] fn test_11() { sample_11(); }
+    #[test] fn test_12() { sample_12(); }
+    #[test] fn test_13() { sample_13(); }
+    #[test] fn test_14() { sample_14(); }
 
 }
 
