@@ -326,10 +326,112 @@ fn new_user(
 }
 
 
+// 構造体
+
+// 名前付きフィールド構造体
+// 構造体のフィールドでは型指定の省略はできない
+#[derive(Default)] // Defaultトレイトを実装することでフィールドのデフォルト値が設定できる
+struct Polygon {
+    vertexes: Vec<(i32, i32)>,
+    stroke_width: u8,
+    fill: (u8, u8, u8),
+}
+
+
+// ユニット構造体
+struct UniqueValue;
+// または
+// struct UniqueValue {}
+// struct UniqueValue();
+
+
+fn sample_15() {
+
+    // Polygon型の値を作り,変数triangleを束縛する
+    let triangle = Polygon{
+        vertexes: vec![(0, 0), (3, 0), (2, 2)],
+        fill: (255, 255, 255),
+        stroke_width: 1,
+    };
+
+    // 1.17よりフィールド初期化略記構文が導入され以下のような初期化も可能
+    let quadrangle = new_polygon(vec![(5, 2), (4, 7), (10, 6), (8, 1)]);
+
+    // フィールドへのアクセスは2通りある
+    // フィールド名を利用する方法, パターンマッチで分解する方法
+
+    // フィールド名でアクセスする方法
+    assert_eq!(triangle.vertexes[0], (0, 0));
+    assert_eq!(triangle.vertexes.len(), 3);
+    assert_eq!(triangle.fill, (255, 255, 255));
+
+    // パターンマッチでのアクセス
+    // 不要なフィールドは .. で省略できる
+    let Polygon { vertexes: quad_vx, .. } = quadrangle;
+    assert_eq!(4, quad_vx.len());
+
+    // :以降を省略するとフィールドと同じ名前の変数が作られ,フィールド値に束縛される
+    let Polygon { fill, .. } = quadrangle;
+    assert_eq!((0, 0, 0), fill);
+
+    // 構造体の値を変更するにはmutが必要
+    let mut polygon = new_polygon(vec![(-1, -5), (-4, 0)]);
+    assert_eq!(polygon.vertexes.len(), 2);
+    polygon.vertexes.push((2, 8));
+    assert_eq!(polygon.vertexes.len(), 3);
+
+    // 既存の値をもとにしてその一部を利用した新しい値を作成することが出来る
+    let triangle1 = Polygon {
+        vertexes: vec![(0, 0), (3, 0), (2, 2)],
+        fill: (255, 255, 255),
+        stroke_width: 5
+    };
+
+    // triangle1を元にvertexesだけ異なる新しい値を作成する
+    let triangle2 = Polygon {
+        vertexes: vec![(0, 0), (-3, 0), (2, 2)],
+        .. triangle1
+    };
+    // この構文は関数型レコードアップデート構文と呼ぶ
+
+    // #[derive(Default)]を実装している構造体であれば以下のように
+    // すべてのフィールドがデフォルト値を持つPolygonを作成する
+    let polygon1: Polygon = Default::default();
+}
+
+
+fn new_polygon(
+    vertexes: Vec<(i32, i32)>) -> Polygon {
+
+    let stroke_width = 1;
+    let fill = (0, 0, 0);
+    Polygon{ vertexes, stroke_width, fill }
+}
+
+
+// タプル構造体
+// タプルのような構造体,フィールドに名前を与えず,0から始まる連番のフィールド名を用いる
+struct Vertex (i32, i32);
+struct Triangle (Vertex, Vertex, Vertex);
+
+
+fn sample_16() {
+
+    let vx0 = Vertex(0, 0);
+    let vx1 = Vertex(3, 0);
+    let triangle = Triangle(vx0, vx1, Vertex(2, 2));
+    assert_eq!((triangle.1).0, 3);
+
+}
+
+
+
+
 
 #[cfg(test)]
 mod test
 {
+    /*
     use super::sample_0;
     use super::sample_1;
     use super::sample_2;
@@ -345,7 +447,11 @@ mod test
     use super::sample_12;
     use super::sample_13;
     use super::sample_14;
+    use super::sample_15;
+    use super::sample_16;
+    */
 
+    /*
     #[test] fn test_0() { sample_0(); }
     #[test] fn test_1() { sample_1(); }
     #[test] fn test_2() { sample_2() }
@@ -361,6 +467,9 @@ mod test
     #[test] fn test_12() { sample_12(); }
     #[test] fn test_13() { sample_13(); }
     #[test] fn test_14() { sample_14(); }
+    #[test] fn test_15() { sample_15(); }
+    #[test] fn test_16() { sample_16(); }
+    */
 
 }
 
